@@ -1,0 +1,29 @@
+{
+  "name": "@augejs/koa-static",
+  "version": "0.0.2-alpha.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --build ./tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alex.Zhang",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@koa/router": "^9.4.0",
+    "@types/koa": "^2.11.4",
+    "@types/koa-static-cache": "^5.1.0",
+    "@types/koa__router": "^8.0.2",
+    "koa": "^2.13.0",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "@types/koa-send": "^4.1.2",
+    "koa-send": "^5.0.1",
+    "koa-static-cache": "^5.1.4"
+  }
+}

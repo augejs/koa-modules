@@ -1,0 +1,10 @@
+{
+  "npmClient": "npm",
+  "packages": [
+    "packages/*"
+  ],
+  "publishConfig": {
+    "directory": "dist"
+  },
+  "version": "1.0.0-rc.1"
+}

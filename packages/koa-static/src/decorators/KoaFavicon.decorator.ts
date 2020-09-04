@@ -1,0 +1,59 @@
+
+import path from 'path';
+import send, { SendOptions} from 'koa-send';
+import Router from '@koa/router';
+
+import { 
+  KOA_WEB_SERVER_IDENTIFIER 
+} from '@augejs/koa';
+
+import {
+  Config, 
+  IScanNode,
+  Metadata,
+  LifecycleOnInitHook,
+} from '@augejs/module-core';
+
+// https://github.com/koajs/send
+
+const FAVICON_IDENTIFIER = 'favicon';
+
+export function KoaFavicon(opts?: any): ClassDecorator {
+  return function(target: Function) {
+    Metadata.decorate([
+      Config({
+        [FAVICON_IDENTIFIER]: {
+          url: '/favicon.ico',
+          path: path.join(__dirname, './assets/favicon.ico'),
+          staticOpts: null,
+        }
+      }),
+      LifecycleOnInitHook(
+        async (scanNode: IScanNode, next: Function) => {
+          const rootScanNodConfig: any = scanNode.context.rootScanNode!.getConfig(FAVICON_IDENTIFIER);
+          const scanNodConfig: any = scanNode.getConfig(FAVICON_IDENTIFIER);
+          const config: any = {
+            ...rootScanNodConfig,
+            ...scanNodConfig,
+            ...opts,
+          }
+
+          const faviconFilePath: string = config.path; 
+          const faviconDir: string = path.dirname(faviconFilePath);
+          const faviconFileName = path.basename(faviconFilePath);
+
+          const staticOpts: SendOptions = config.staticOpts;
+          const router:Router = scanNode.context.container.get<Router>(KOA_WEB_SERVER_IDENTIFIER);
+          router.get(config.url, async (context) => {
+            await send(context, faviconFileName, {
+              root: faviconDir,
+              ...staticOpts,
+            });
+          });
+
+          await next();
+        }
+      )
+    ], target);
+  }
+}

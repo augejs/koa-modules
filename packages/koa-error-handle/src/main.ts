@@ -1,0 +1,62 @@
+import { Context } from 'koa';
+import { MiddlewareFactory } from '@augejs/koa';
+
+import {
+  IScanNode
+} from '@augejs/module-core';
+
+interface IErrorHandleOptions {
+  [key: string]: (ctx: Context, err: any, scanNode: IScanNode)=> Promise<void>
+}
+
+const ERROR_HANDLE_IDENTIFIER = 'errorHandle';
+
+export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function): ClassDecorator {
+  return MiddlewareFactory(async (scanNode: IScanNode) => {
+    if (typeof opts === 'function') {
+      opts = await opts(scanNode);
+    }
+  
+    const defaultErrorHandleOptions: IErrorHandleOptions = {
+      text: async (ctx: Context, err: any)=>{
+        ctx.type = 'text/plain'
+        ctx.body = err?.message || '';
+      },
+      json: async (ctx: Context, err: any)=>{
+        ctx.type = 'application/json';
+        ctx.body = {
+          error: err?.message,
+          stack: (ctx.app.env === 'development' || err?.expose) ? err?.stack : undefined,
+        };
+      },
+    };
+
+    const config: IErrorHandleOptions = {
+      ...defaultErrorHandleOptions,
+      ...scanNode.context.rootScanNode!.getConfig(ERROR_HANDLE_IDENTIFIER),
+      ...scanNode.getConfig(ERROR_HANDLE_IDENTIFIER),
+      ...opts,
+    };
+
+    const accepts: string[] = Object.keys(config);
+    return async (ctx: Context, next: Function) => {
+      try {
+        await next();
+        if (ctx.response.status === 404 && !ctx.response.body) ctx.throw(404);
+      } catch (err) {
+        ctx.status = typeof err?.status === 'number' ? err.status : 500;
+        const type: string | boolean = ctx.accepts(accepts);
+        if (!!type) {
+          const typeHandle: Function | null = config[type as string] || null;
+          if (typeHandle) {
+            await typeHandle(ctx, err, scanNode);
+            return;
+          }
+        }
+
+        throw err;
+      }
+    }
+  }) 
+}
+
