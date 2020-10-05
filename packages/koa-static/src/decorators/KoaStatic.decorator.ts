@@ -3,11 +3,9 @@ import path from 'path';
 import staticCache, { Options } from 'koa-static-cache';
 
 import { 
-  MiddlewareFactory,
-  KOA_ROUTER_IDENTIFIER,
+  IKoaApplication,
+  KOA_WEB_SERVER_IDENTIFIER,
 } from '@augejs/koa';
-
-import Router from '@koa/router';
 
 import {
   Config,
@@ -35,12 +33,8 @@ export function KoaStatic(opts?: Options): ClassDecorator {
             ...opts,
           }
 
-          const prefix: string = config?.prefix || '/';
-          const router: Router = scanNode.context.container.get(KOA_ROUTER_IDENTIFIER);
-          router.get(prefix, {
-            ...config,
-            prefix: '',
-          })
+          const koa  = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
+          koa.use(staticCache(config));
 
           await next();
         }
@@ -48,22 +42,3 @@ export function KoaStatic(opts?: Options): ClassDecorator {
     ], target)
   }
 }
-
-
-export function KoaStaticMiddleware(opts?: Options | Function): MethodDecorator {
-  return MiddlewareFactory(async (scanNode: IScanNode) => {
-    if (typeof opts === 'function') {
-      opts = await opts(scanNode);
-    }
-
-    return staticCache({
-      dir: path.join(process.cwd(), 'public'),
-      ...scanNode.context.rootScanNode!.getConfig(STATIC_IDENTIFIER),
-      ...scanNode.getConfig(STATIC_IDENTIFIER),
-      ...opts,
-      // here is a middleware the prefix will define in route. not here.
-      prefix: '',
-    });
-  });
-}
-

@@ -1,11 +1,7 @@
 
 import path from 'path';
 import send, { SendOptions} from 'koa-send';
-import Router from '@koa/router';
-
-import { 
-  KOA_WEB_SERVER_IDENTIFIER 
-} from '@augejs/koa';
+import { KOA_WEB_SERVER_IDENTIFIER, IKoaApplication } from '@augejs/koa';
 
 import {
   Config, 
@@ -43,8 +39,9 @@ export function KoaFavicon(opts?: any): ClassDecorator {
           const faviconFileName = path.basename(faviconFilePath);
 
           const staticOpts: SendOptions = config.staticOpts;
-          const router:Router = scanNode.context.container.get<Router>(KOA_WEB_SERVER_IDENTIFIER);
-          router.get(config.url, async (context) => {
+
+          const koa: IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
+          koa.router.get(config.url, async (context) => {
             await send(context, faviconFileName, {
               root: faviconDir,
               ...staticOpts,
