@@ -1,6 +1,6 @@
 {
   "name": "@augejs/koa-static",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
@@ -9,14 +9,22 @@
     "postbuild": "copyfiles assets/* dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augejs/koa-modules.git"
+  },
   "author": "Alex.Zhang",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/augejs/koa-modules/issues"
+  },
+  "homepage": "https://augejs.github.io/docs/Techniques-Koa-static",
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "dist/"
-  ],
   "devDependencies": {
     "copyfiles": "^2.4.0",
     "rimraf": "^3.0.2"
