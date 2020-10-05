@@ -1,9 +1,9 @@
 
 import send, { SendOptions } from 'koa-send';
-import Application from 'koa';
 
 import { 
   KOA_WEB_SERVER_IDENTIFIER, 
+  IKoaApplication
 } from '@augejs/koa';
 
 import {
@@ -25,7 +25,7 @@ export function KoaSend(opts?: SendOptions): ClassDecorator {
     Metadata.decorate([
       LifecycleOnInitHook(
         async (scanNode: IScanNode, next: Function) => {
-          const koa:Application = scanNode.context.container.get<Application>(KOA_WEB_SERVER_IDENTIFIER);
+          const koa:IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
 
           const config: any = {
             ...scanNode.context.rootScanNode!.getConfig(SEND_FILE_IDENTIFIER),

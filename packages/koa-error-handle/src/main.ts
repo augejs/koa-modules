@@ -1,12 +1,11 @@
-import { Context } from 'koa';
-import { MiddlewareFactory } from '@augejs/koa';
+import { MiddlewareFactory, IKoaContext } from '@augejs/koa';
 
 import {
   IScanNode
 } from '@augejs/module-core';
 
 interface IErrorHandleOptions {
-  [key: string]: (ctx: Context, err: any, scanNode: IScanNode)=> Promise<void>
+  [key: string]: (ctx: IKoaContext, err: any, scanNode: IScanNode)=> Promise<void>
 }
 
 const ERROR_HANDLE_IDENTIFIER = 'errorHandle';
@@ -18,11 +17,11 @@ export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function):
     }
   
     const defaultErrorHandleOptions: IErrorHandleOptions = {
-      text: async (ctx: Context, err: any)=>{
+      text: async (ctx: IKoaContext, err: any)=>{
         ctx.type = 'text/plain'
         ctx.body = err?.message || '';
       },
-      json: async (ctx: Context, err: any)=>{
+      json: async (ctx: IKoaContext, err: any)=>{
         ctx.type = 'application/json';
         ctx.body = {
           error: err?.message,
@@ -39,12 +38,13 @@ export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function):
     };
 
     const accepts: string[] = Object.keys(config);
-    return async (ctx: Context, next: Function) => {
+    return async (ctx: IKoaContext, next: Function) => {
       try {
         await next();
         if (ctx.response.status === 404 && !ctx.response.body) ctx.throw(404);
       } catch (err) {
         ctx.status = typeof err?.status === 'number' ? err.status : 500;
+        // https://inviqa.com/blog/how-build-basic-api-typescript-koa-and-typeorm
         const type: string | boolean = ctx.accepts(accepts);
         if (!!type) {
           const typeHandle: Function | null = config[type as string] || null;
