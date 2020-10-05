@@ -1,6 +1,5 @@
-import Application from 'koa';
 import session from 'koa-session';
-import { MiddlewareFactory, KOA_WEB_SERVER_IDENTIFIER } from '@augejs/koa';
+import { MiddlewareFactory, KOA_WEB_SERVER_IDENTIFIER, IKoaApplication } from '@augejs/koa';
 
 import {
   IScanNode
@@ -15,7 +14,7 @@ export function KoaSessionMiddleWare(opts?: session.opts | Function): ClassDecor
       opts = await opts(scanNode);
     }
 
-    const application: Application = scanNode.context.container.get<Application>(KOA_WEB_SERVER_IDENTIFIER);
+    const application: IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
   
     return session({
       ...scanNode.context.rootScanNode!.getConfig(SESSION_IDENTIFIER),

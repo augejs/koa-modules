@@ -2,16 +2,6 @@
   "name": "root",
   "private": true,
   "type": "module",
-  "devDependencies": {
-    "@augejs/koa": "^1.0.1-rc.1",
-    "@augejs/module-core": "^1.0.1-rc.1",
-    "@types/koa": "^2.11.4",
-    "koa": "^2.13.0",
-    "lerna": "^3.22.1",
-    "reflect-metadata": "^0.1.13",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.0.3"
-  },
   "scripts": {
     "clean:node_modules": "lerna clean",
     "init:node_modules": "lerna bootstrap --hoist",
@@ -30,5 +20,24 @@
       "pre-push": "npm test",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "devDependencies": {
+    "@augejs/koa": "^1.0.1-rc.3",
+    "@augejs/module-core": "^1.0.1-rc.3",
+    "@commitlint/cli": "^9.1.2",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@types/node": "^14.6.4",
+    "conventional-changelog-cli": "^2.1.0",
+    "eslint": "^7.8.1",
+    "gh-pages": "^3.1.0",
+    "husky": "^4.2.5",
+    "jest": "^26.4.2",
+    "lerna": "^3.22.1",
+    "prettier": "^2.1.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.3.0",
+    "ts-node": "^9.0.0",
+    "tslib": "^2.0.1",
+    "typescript": "^4.0.2"
   }
 }
