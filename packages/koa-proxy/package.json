@@ -1,6 +1,6 @@
 {
   "name": "@augejs/koa-proxy",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
@@ -8,8 +8,19 @@
     "build": "tsc --build ./tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augejs/koa-modules.git"
+  },
   "author": "Alex.Zhang",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/augejs/koa-modules/issues"
+  },
+  "homepage": "https://augejs.github.io/docs/Techniques-Koa-proxy",
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
