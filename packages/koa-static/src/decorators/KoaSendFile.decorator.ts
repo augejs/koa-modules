@@ -18,7 +18,7 @@ declare module 'koa' {
   }
 }
 
-const SEND_FILE_IDENTIFIER = 'sendFile';
+const ConfigName = 'sendFile';
 
 export function KoaSend(opts?: SendOptions): ClassDecorator {
   return function(target: Function) {
@@ -28,8 +28,8 @@ export function KoaSend(opts?: SendOptions): ClassDecorator {
           const koa:IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
 
           const config: any = {
-            ...scanNode.context.rootScanNode!.getConfig(SEND_FILE_IDENTIFIER),
-            ...scanNode.getConfig(SEND_FILE_IDENTIFIER),
+            ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+            ...scanNode.getConfig(ConfigName),
             ...opts,
           };
 

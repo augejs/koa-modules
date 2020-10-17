@@ -8,7 +8,7 @@ import {
 
 import { MiddlewareFactory } from '@augejs/koa';
 
-const HELMET_IDENTIFIER = 'helmet';
+export const ConfigName = 'helmet';
 
 export function KoaHelmetMiddleware(opts?: IHelmetConfiguration | Function): ClassDecorator & MethodDecorator {
   return MiddlewareFactory(async (scanNode: IScanNode) => {
@@ -17,8 +17,8 @@ export function KoaHelmetMiddleware(opts?: IHelmetConfiguration | Function): Cla
     }
 
     return helmet({
-      ...scanNode.context.rootScanNode!.getConfig(HELMET_IDENTIFIER),
-      ...scanNode.getConfig(HELMET_IDENTIFIER),
+      ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+      ...scanNode.getConfig(ConfigName),
       ...opts
     });
   });

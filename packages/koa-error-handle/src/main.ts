@@ -8,7 +8,7 @@ interface IErrorHandleOptions {
   [key: string]: (ctx: IKoaContext, err: any, scanNode: IScanNode)=> Promise<void>
 }
 
-const ERROR_HANDLE_IDENTIFIER = 'errorHandle';
+export const ConfigName = 'errorHandle'
 
 export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function): ClassDecorator {
   return MiddlewareFactory(async (scanNode: IScanNode) => {
@@ -32,8 +32,8 @@ export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function):
 
     const config: IErrorHandleOptions = {
       ...defaultErrorHandleOptions,
-      ...scanNode.context.rootScanNode!.getConfig(ERROR_HANDLE_IDENTIFIER),
-      ...scanNode.getConfig(ERROR_HANDLE_IDENTIFIER),
+      ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+      ...scanNode.getConfig(ConfigName),
       ...opts,
     };
 

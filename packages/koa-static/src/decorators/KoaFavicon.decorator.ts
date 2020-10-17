@@ -8,17 +8,18 @@ import {
   IScanNode,
   Metadata,
   LifecycleOnInitHook,
+
 } from '@augejs/module-core';
 
 // https://github.com/koajs/send
 
-const FAVICON_IDENTIFIER = 'favicon';
+const ConfigName = 'favicon';
 
 export function KoaFavicon(opts?: any): ClassDecorator {
   return function(target: Function) {
     Metadata.decorate([
       Config({
-        [FAVICON_IDENTIFIER]: {
+        [ConfigName]: {
           url: '/favicon.ico',
           path: path.join(__dirname, './assets/favicon.ico'),
           staticOpts: null,
@@ -26,8 +27,8 @@ export function KoaFavicon(opts?: any): ClassDecorator {
       }),
       LifecycleOnInitHook(
         async (scanNode: IScanNode, next: Function) => {
-          const rootScanNodConfig: any = scanNode.context.rootScanNode!.getConfig(FAVICON_IDENTIFIER);
-          const scanNodConfig: any = scanNode.getConfig(FAVICON_IDENTIFIER);
+          const rootScanNodConfig: any = scanNode.context.rootScanNode!.getConfig(ConfigName);
+          const scanNodConfig: any = scanNode.getConfig(ConfigName);
           const config: any = {
             ...rootScanNodConfig,
             ...scanNodConfig,

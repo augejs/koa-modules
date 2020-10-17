@@ -2,7 +2,7 @@ import { IScanNode } from '@augejs/module-core';
 import { MiddlewareFactory } from '@augejs/koa';
 import multer, { Options, Field } from 'koa-multer';
 
-const MULTER_IDENTIFIER = 'multer';
+export const ConfigName = 'multer';
 
 // https://github.com/expressjs/multer
 export function KoaMulterSingleMiddleware(fieldName?: string, opts?: Options | Function): MethodDecorator {
@@ -12,8 +12,8 @@ export function KoaMulterSingleMiddleware(fieldName?: string, opts?: Options | F
     }
 
     return multer({
-      ...scanNode.context.rootScanNode!.getConfig(MULTER_IDENTIFIER),
-      ...scanNode.getConfig(MULTER_IDENTIFIER),
+      ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+      ...scanNode.getConfig(ConfigName),
       ...opts
     }).single(fieldName);
   });
@@ -26,8 +26,8 @@ export function KoaMulterArrayMiddleware(fieldName: string, maxCount?: number, o
     }
 
     return multer({
-      ...scanNode.context.rootScanNode!.getConfig(MULTER_IDENTIFIER),
-      ...scanNode.getConfig(MULTER_IDENTIFIER),
+      ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+      ...scanNode.getConfig(ConfigName),
       ...opts
     }).array(fieldName, maxCount);
   });
@@ -40,8 +40,8 @@ export function KoaMulterFieldsMiddleware(fields: Field[], opts?: Options | Func
     }
 
     return multer({
-      ...scanNode.context.rootScanNode!.getConfig(MULTER_IDENTIFIER),
-      ...scanNode.getConfig(MULTER_IDENTIFIER),
+      ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+      ...scanNode.getConfig(ConfigName),
       ...opts
     }).fields(fields);
   });
@@ -54,8 +54,8 @@ export function KoaMulterAnyMiddleware(opts?: Options | Function): MethodDecorat
     }
 
     return multer({
-      ...scanNode.context.rootScanNode!.getConfig(MULTER_IDENTIFIER),
-      ...scanNode.getConfig(MULTER_IDENTIFIER),
+      ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+      ...scanNode.getConfig(ConfigName),
       ...opts
     }).any()
   });

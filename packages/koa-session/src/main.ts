@@ -5,7 +5,7 @@ import {
   IScanNode
 } from '@augejs/module-core';
 
-const SESSION_IDENTIFIER = 'session';
+export const ConfigName = 'session';
 
 // // https://github.com/koajs/session
 export function KoaSessionMiddleWare(opts?: session.opts | Function): ClassDecorator & MethodDecorator {
@@ -17,8 +17,8 @@ export function KoaSessionMiddleWare(opts?: session.opts | Function): ClassDecor
     const application: IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
   
     return session({
-      ...scanNode.context.rootScanNode!.getConfig(SESSION_IDENTIFIER),
-      ...scanNode.getConfig(SESSION_IDENTIFIER),
+      ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+      ...scanNode.getConfig(ConfigName),
       ...opts
     }, application);
   }) 
