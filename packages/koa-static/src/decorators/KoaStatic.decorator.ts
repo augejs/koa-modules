@@ -12,7 +12,7 @@ import {
   IScanNode,
   LifecycleOnInitHook,
   Metadata,
-  __appRootDirName
+  __appRootDir
 } from '@augejs/module-core';
 
 const ConfigName = 'static';
@@ -23,7 +23,7 @@ export function KoaStatic(opts?: Options): ClassDecorator {
     Metadata.decorate([
       Config({
         [ConfigName]: {
-          dir: path.join(__appRootDirName, 'public'),
+          dir: path.join(__appRootDir, 'public'),
         }
       }),
       LifecycleOnInitHook(
