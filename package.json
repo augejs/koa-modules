@@ -23,8 +23,8 @@
     }
   },
   "dependencies": {
-    "@augejs/koa": "^1.0.1-rc.6",
-    "@augejs/module-core": "^1.0.1-rc.11"
+    "@augejs/koa": "1.0.1-rc.19",
+    "@augejs/module-core": "1.0.1-rc.11"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.1.2",

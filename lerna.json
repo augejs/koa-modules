@@ -6,5 +6,5 @@
   "publishConfig": {
     "directory": "dist"
   },
-  "version": "1.0.0-rc.9"
+  "version": "1.0.0-y.0"
 }
