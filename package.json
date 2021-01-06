@@ -1,7 +1,6 @@
 {
   "name": "root",
   "private": true,
-  "type": "module",
   "scripts": {
     "clean:node_modules": "lerna clean",
     "init:node_modules": "lerna bootstrap --hoist",
