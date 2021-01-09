@@ -10,6 +10,11 @@ interface IErrorHandleOptions {
 
 export const ConfigName = 'errorHandle'
 
+const defaultErrorHandle = async (ctx: IKoaContext, err: any)=>{
+  ctx.type = 'text/plain'
+  ctx.body = err?.message || '';
+};
+
 export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function): ClassDecorator {
   return MiddlewareFactory(async (scanNode: IScanNode) => {
     if (typeof opts === 'function') {
@@ -17,17 +22,14 @@ export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function):
     }
   
     const defaultErrorHandleOptions: IErrorHandleOptions = {
-      text: async (ctx: IKoaContext, err: any)=>{
-        ctx.type = 'text/plain'
-        ctx.body = err?.message || '';
-      },
-      json: async (ctx: IKoaContext, err: any)=>{
+      json: async (ctx: IKoaContext, err: any) => {
         ctx.type = 'application/json';
         ctx.body = {
           error: err?.message,
           stack: (ctx.app.env === 'development' || err?.expose) ? err?.stack : undefined,
         };
       },
+      default: defaultErrorHandle,
     };
 
     const config: IErrorHandleOptions = {
@@ -37,7 +39,7 @@ export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function):
       ...opts,
     };
 
-    const accepts: string[] = Object.keys(config);
+    const accepts: string[] = Object.keys(config).filter(key => !!config[key]);
     return async (ctx: IKoaContext, next: Function) => {
       try {
         await next();
@@ -46,15 +48,10 @@ export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function):
         ctx.status = typeof err?.status === 'number' ? err.status : 500;
         // https://inviqa.com/blog/how-build-basic-api-typescript-koa-and-typeorm
         const type: string | boolean = ctx.accepts(accepts);
-        if (!!type) {
-          const typeHandle: Function | null = config[type as string] || null;
-          if (typeHandle) {
-            await typeHandle(ctx, err, scanNode);
-            return;
-          }
-        }
-
-        throw err;
+        const typeErrorHandle: Function = !!type ? 
+          (config[type as string] || config['default'] || defaultErrorHandle) : 
+          defaultErrorHandle;
+        await typeErrorHandle(ctx, err, scanNode);
       }
     }
   }) 
