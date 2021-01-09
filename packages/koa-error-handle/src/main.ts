@@ -1,4 +1,7 @@
 import { MiddlewareFactory, IKoaContext } from '@augejs/koa';
+import { Validator } from '@augejs/koa';
+
+const { ValidationError } = Validator;
 
 import {
   IScanNode
@@ -24,6 +27,16 @@ export function KoaErrorHandleMiddleWare(opts?: IErrorHandleOptions | Function):
     const defaultErrorHandleOptions: IErrorHandleOptions = {
       json: async (ctx: IKoaContext, err: any) => {
         ctx.type = 'application/json';
+        
+        if (Array.isArray(err) &&
+          err.length > 0 &&
+          err[0] instanceof ValidationError) {
+          ctx.body = {
+            error: err,
+          };
+          return;
+        }
+
         ctx.body = {
           error: err?.message,
           stack: (ctx.app.env === 'development' || err?.expose) ? err?.stack : undefined,
