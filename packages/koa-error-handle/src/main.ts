@@ -5,7 +5,7 @@ const { ValidationError } = Validator;
 
 import {
   IScanNode
-} from '@augejs/module-core';
+} from '@augejs/core';
 
 interface IErrorHandleOptions {
   [key: string]: (ctx: IKoaContext, err: any, scanNode: IScanNode)=> Promise<void>

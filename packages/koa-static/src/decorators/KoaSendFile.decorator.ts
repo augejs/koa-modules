@@ -10,7 +10,7 @@ import {
   IScanNode,
   Metadata,
   LifecycleOnInitHook,
-} from '@augejs/module-core';
+} from '@augejs/core';
 
 declare module 'koa' {
   interface Context {

@@ -1,4 +1,4 @@
-import { IScanNode } from '@augejs/module-core';
+import { IScanNode } from '@augejs/core';
 import { MiddlewareFactory } from '@augejs/koa';
 import bodyparser, { Options } from 'koa-bodyparser';
 

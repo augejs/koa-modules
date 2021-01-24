@@ -9,7 +9,7 @@ import {
   Metadata,
   LifecycleOnInitHook,
 
-} from '@augejs/module-core';
+} from '@augejs/core';
 
 // https://github.com/koajs/send
 

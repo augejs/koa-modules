@@ -3,7 +3,7 @@ import { MiddlewareFactory, KOA_WEB_SERVER_IDENTIFIER, IKoaApplication } from '@
 
 import {
   IScanNode
-} from '@augejs/module-core';
+} from '@augejs/core';
 
 export const ConfigName = 'session';
 

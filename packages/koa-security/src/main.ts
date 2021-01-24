@@ -4,7 +4,7 @@ import { IHelmetConfiguration } from 'helmet'
 
 import { 
   IScanNode
-} from '@augejs/module-core';
+} from '@augejs/core';
 
 import { MiddlewareFactory } from '@augejs/koa';
 

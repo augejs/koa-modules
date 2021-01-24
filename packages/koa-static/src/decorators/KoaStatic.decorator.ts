@@ -13,7 +13,7 @@ import {
   LifecycleOnInitHook,
   Metadata,
   __appRootDir
-} from '@augejs/module-core';
+} from '@augejs/core';
 
 const ConfigName = 'static';
 
