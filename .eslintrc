@@ -1,0 +1,16 @@
+// https://robertcooper.me/post/using-eslint-and-prettier-in-a-typescript-project
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "prettier",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/no-non-null-assertion": "off"
+  }
+}

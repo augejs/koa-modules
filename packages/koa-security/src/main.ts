@@ -8,9 +8,9 @@ import {
 
 import { MiddlewareFactory } from '@augejs/koa';
 
-export const ConfigName = 'helmet';
+export const ConfigName = 'security';
 
-export function KoaHelmetMiddleware(opts?: IHelmetConfiguration | Function): ClassDecorator & MethodDecorator {
+export function KoaSecurityMiddleware(opts?: IHelmetConfiguration | CallableFunction): ClassDecorator & MethodDecorator {
   return MiddlewareFactory(async (scanNode: IScanNode) => {
     if (typeof opts === 'function') {
       opts = await opts(scanNode);

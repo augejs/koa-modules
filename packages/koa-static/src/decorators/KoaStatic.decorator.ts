@@ -19,7 +19,7 @@ const ConfigName = 'static';
 
 // https://github.com/koajs/static-cache
 export function KoaStatic(opts?: Options): ClassDecorator {
-  return function(target: Function) {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       Config({
         [ConfigName]: {
@@ -27,7 +27,8 @@ export function KoaStatic(opts?: Options): ClassDecorator {
         }
       }),
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: Function) => {
+        async (scanNode: IScanNode, next: CallableFunction) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const config: any = {
             ...scanNode.context.rootScanNode!.getConfig(ConfigName),
             ...scanNode.getConfig(ConfigName),

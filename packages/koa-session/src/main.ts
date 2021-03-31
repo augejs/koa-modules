@@ -8,7 +8,7 @@ import {
 export const ConfigName = 'session';
 
 // // https://github.com/koajs/session
-export function KoaSessionMiddleWare(opts?: session.opts | Function): ClassDecorator & MethodDecorator {
+export function KoaSessionMiddleWare(opts?: session.opts | CallableFunction): ClassDecorator & MethodDecorator {
   return MiddlewareFactory(async (scanNode: IScanNode) => {
     if (typeof opts === 'function') {
       opts = await opts(scanNode);
