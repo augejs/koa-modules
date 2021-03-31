@@ -1,4 +1,3 @@
-
 import path from 'path';
 import send, { SendOptions} from 'koa-send';
 import { KOA_WEB_SERVER_IDENTIFIER, IKoaApplication } from '@augejs/koa';
@@ -15,8 +14,14 @@ import {
 
 const ConfigName = 'favicon';
 
-export function KoaFavicon(opts?: any): ClassDecorator {
-  return function(target: Function) {
+type FaviconOption = {
+  url?: string,
+  path?: string,
+  staticOpts?: SendOptions
+}
+
+export function KoaFavicon(opts?: FaviconOption): ClassDecorator {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       Config({
         [ConfigName]: {
@@ -26,10 +31,10 @@ export function KoaFavicon(opts?: any): ClassDecorator {
         }
       }),
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: Function) => {
-          const rootScanNodConfig: any = scanNode.context.rootScanNode!.getConfig(ConfigName);
-          const scanNodConfig: any = scanNode.getConfig(ConfigName);
-          const config: any = {
+        async (scanNode: IScanNode, next: CallableFunction) => {
+          const rootScanNodConfig = scanNode.context.rootScanNode!.getConfig(ConfigName);
+          const scanNodConfig = scanNode.getConfig(ConfigName);
+          const config = {
             ...rootScanNodConfig,
             ...scanNodConfig,
             ...opts,

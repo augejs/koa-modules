@@ -21,19 +21,20 @@ declare module 'koa' {
 const ConfigName = 'sendFile';
 
 export function KoaSend(opts?: SendOptions): ClassDecorator {
-  return function(target: Function) {
+  return function(target: NewableFunction) {
     Metadata.decorate([
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: Function) => {
+        async (scanNode: IScanNode, next: CallableFunction) => {
           const koa:IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
 
-          const config: any = {
+          const config = {
             ...scanNode.context.rootScanNode!.getConfig(ConfigName),
             ...scanNode.getConfig(ConfigName),
             ...opts,
           };
 
           koa.context.sendFile = async function(path: string, opts?: SendOptions) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await send(this as any, path, {
               ...config,
               ...opts

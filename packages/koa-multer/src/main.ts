@@ -5,7 +5,7 @@ import multer, { Options, Field } from 'koa-multer';
 export const ConfigName = 'multer';
 
 // https://github.com/expressjs/multer
-export function KoaMulterSingleMiddleware(fieldName?: string, opts?: Options | Function): MethodDecorator {
+export function KoaMulterSingleMiddleware(fieldName?: string, opts?: Options | CallableFunction): MethodDecorator {
   return MiddlewareFactory(async (scanNode: IScanNode) => {
     if (typeof opts === 'function') {
       opts = await opts(scanNode);
@@ -19,7 +19,7 @@ export function KoaMulterSingleMiddleware(fieldName?: string, opts?: Options | F
   });
 }
 
-export function KoaMulterArrayMiddleware(fieldName: string, maxCount?: number, opts?: Options | Function): MethodDecorator {
+export function KoaMulterArrayMiddleware(fieldName: string, maxCount?: number, opts?: Options | CallableFunction): MethodDecorator {
   return MiddlewareFactory(async (scanNode: IScanNode) => {
     if (typeof opts === 'function') {
       opts = await opts(scanNode);
@@ -33,7 +33,7 @@ export function KoaMulterArrayMiddleware(fieldName: string, maxCount?: number, o
   });
 }
 
-export function KoaMulterFieldsMiddleware(fields: Field[], opts?: Options | Function): MethodDecorator {
+export function KoaMulterFieldsMiddleware(fields: Field[], opts?: Options | CallableFunction): MethodDecorator {
   return MiddlewareFactory(async (scanNode: IScanNode) => {
     if (typeof opts === 'function') {
       opts = await opts(scanNode);
@@ -47,7 +47,7 @@ export function KoaMulterFieldsMiddleware(fields: Field[], opts?: Options | Func
   });
 }
 
-export function KoaMulterAnyMiddleware(opts?: Options | Function): MethodDecorator {
+export function KoaMulterAnyMiddleware(opts?: Options | CallableFunction): MethodDecorator {
   return MiddlewareFactory(async (scanNode: IScanNode) => {
     if (typeof opts === 'function') {
       opts = await opts(scanNode);
@@ -57,7 +57,7 @@ export function KoaMulterAnyMiddleware(opts?: Options | Function): MethodDecorat
       ...scanNode.context.rootScanNode!.getConfig(ConfigName),
       ...scanNode.getConfig(ConfigName),
       ...opts
-    }).any()
+    }).any();
   });
 }
 

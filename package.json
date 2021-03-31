@@ -8,6 +8,7 @@
     "build": "lerna run build",
     "publish": "lerna publish --skip-git",
     "publish:canary": "lerna publish --canary",
+    "lint": "eslint packages/*/src --ext .ts",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -15,31 +16,26 @@
     "build:apiDoc": "rimraf apiDocs && typedoc --tsconfig ./tsconfig.json --options ./typedoc.config.json && mkdir -p ./apiDocs/docs/assets && cp -r ./docs/assets/* ./apiDocs/docs/assets",
     "deploy:apiDoc": "npm run build:apiDoc && gh-pages -d apiDocs"
   },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm test",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
-  "dependencies": {
-    "@augejs/koa": "1.0.3",
-    "@augejs/core": "1.0.3"
-  },
   "devDependencies": {
-    "@commitlint/cli": "^11.0.0",
-    "@commitlint/config-conventional": "^11.0.0",
-    "@types/node": "^14.14.22",
+    "@augejs/core": "^1.0.4",
+    "@augejs/koa": "1.1.0",
+    "@commitlint/cli": "^12.0.1",
+    "@commitlint/config-conventional": "^12.0.1",
+    "@types/node": "^14.14.37",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
     "conventional-changelog-cli": "^2.1.1",
-    "eslint": "^7.18.0",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
     "gh-pages": "^3.1.0",
-    "husky": "^4.3.8",
+    "husky": "^6.0.0",
     "jest": "^26.6.3",
-    "lerna": "^3.22.1",
+    "lerna": "^4.0.0",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
-    "ts-jest": "^26.4.4",
+    "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",
     "tslib": "^2.1.0",
-    "typescript": "^4.0.2"
+    "typescript": "^4.2.3"
   }
 }
