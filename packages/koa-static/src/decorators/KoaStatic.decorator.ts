@@ -3,13 +3,13 @@ import path from 'path';
 import staticCache, { Options } from 'koa-static-cache';
 
 import { 
-  IKoaApplication,
+  KoaApplication,
   KOA_WEB_SERVER_IDENTIFIER,
 } from '@augejs/koa';
 
 import {
   Config,
-  IScanNode,
+  ScanNode,
   LifecycleOnInitHook,
   Metadata,
   __appRootDir
@@ -27,15 +27,14 @@ export function KoaStatic(opts?: Options): ClassDecorator {
         }
       }),
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const config: any = {
+        async (scanNode: ScanNode, next: CallableFunction) => {
+          const config = {
             ...scanNode.context.rootScanNode!.getConfig(ConfigName),
             ...scanNode.getConfig(ConfigName),
             ...opts,
           }
 
-          const koa  = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
+          const koa  = scanNode.context.container.get<KoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
           koa.use(staticCache(config));
 
           await next();
