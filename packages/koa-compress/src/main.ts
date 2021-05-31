@@ -1,11 +1,11 @@
-import { IScanNode } from '@augejs/core';
+import { ScanNode } from '@augejs/core';
 import { MiddlewareFactory } from '@augejs/koa';
 import compress, {CompressOptions} from 'koa-compress';
 
 export const ConfigName = 'compress';
 
 export function KoaCompressMiddleware(opts?: CompressOptions | CallableFunction): ClassDecorator & MethodDecorator {
-  return MiddlewareFactory(async (scanNode: IScanNode) => {
+  return MiddlewareFactory(async (scanNode: ScanNode) => {
     if (typeof opts === 'function') {
       opts = await opts(scanNode);
     }

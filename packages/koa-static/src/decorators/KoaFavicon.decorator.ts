@@ -1,10 +1,10 @@
 import path from 'path';
 import send, { SendOptions} from 'koa-send';
-import { KOA_WEB_SERVER_IDENTIFIER, IKoaApplication } from '@augejs/koa';
+import { KOA_WEB_SERVER_IDENTIFIER, KoaApplication } from '@augejs/koa';
 
 import {
   Config, 
-  IScanNode,
+  ScanNode,
   Metadata,
   LifecycleOnInitHook,
 
@@ -31,7 +31,7 @@ export function KoaFavicon(opts?: FaviconOption): ClassDecorator {
         }
       }),
       LifecycleOnInitHook(
-        async (scanNode: IScanNode, next: CallableFunction) => {
+        async (scanNode: ScanNode, next: CallableFunction) => {
           const rootScanNodConfig = scanNode.context.rootScanNode!.getConfig(ConfigName);
           const scanNodConfig = scanNode.getConfig(ConfigName);
           const config = {
@@ -46,7 +46,7 @@ export function KoaFavicon(opts?: FaviconOption): ClassDecorator {
 
           const staticOpts: SendOptions = config.staticOpts;
 
-          const koa: IKoaApplication = scanNode.context.container.get<IKoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
+          const koa: KoaApplication = scanNode.context.container.get<KoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
           koa.router.get(config.url, async (context) => {
             await send(context, faviconFileName, {
               root: faviconDir,

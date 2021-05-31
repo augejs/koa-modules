@@ -1,4 +1,4 @@
-import { IScanNode } from '@augejs/core';
+import { ScanNode } from '@augejs/core';
 import { MiddlewareFactory } from '@augejs/koa';
 import bodyparser, { Options } from 'koa-bodyparser';
 
@@ -7,7 +7,7 @@ import bodyparser, { Options } from 'koa-bodyparser';
 export const ConfigName = 'bodyparser';
 
 export function KoaBodyParserMiddleware(opts?: Options | CallableFunction): ClassDecorator & MethodDecorator {
-  return MiddlewareFactory(async (scanNode: IScanNode) => {
+  return MiddlewareFactory(async (scanNode: ScanNode) => {
     if (typeof opts === 'function') {
       opts = await opts(scanNode);
     }

@@ -1,0 +1,34 @@
+{
+  "name": "@augejs/koa-http-proxy",
+  "version": "1.0.2-rc.2",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --build ./tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augejs/koa-modules.git"
+  },
+  "author": "Alex.Zhang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/augejs/koa-modules/issues"
+  },
+  "homepage": "https://augejs.github.io/docs/Techniques-Koa-multer",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "@types/http-proxy": "^1.17.6",
+    "http-proxy": "^1.18.1"
+  }
+}
