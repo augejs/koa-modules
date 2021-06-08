@@ -23,7 +23,7 @@ type Options = {
   skipUrls?: string[],
 }
 
-const ConfigName = 'static';
+const ConfigName = 'swagger';
 
 // https://github.com/carlansley/swagger2-koa
 export function KoaSwagger(opts?: Options): ClassDecorator {
