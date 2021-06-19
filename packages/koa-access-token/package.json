@@ -1,0 +1,36 @@
+{
+  "name": "@augejs/koa-access-token",
+  "version": "1.0.2-rc.2",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --build ./tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augejs/koa-modules.git"
+  },
+  "author": "Alex.Zhang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/augejs/koa-modules/issues"
+  },
+  "homepage": "https://augejs.github.io/docs/Techniques-Koa-bodyparser",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/ms": "^0.7.31",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "@augejs/i18n": "^1.3.9",
+    "@augejs/redis": "^1.3.9",
+    "ms": "^2.1.3"
+  }
+}
