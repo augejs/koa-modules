@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { Config, LifecycleOnInitHook, Logger, Metadata, ScanContext, ScanNode } from '@augejs/core';
 import { KOA_WEB_SERVER_IDENTIFIER, MiddlewareFactory, HttpStatus, KoaApplication, KoaContext } from '@augejs/koa';
 import { I18N_IDENTIFIER, II18n } from '@augejs/i18n';
-import { FindSessionsByUserIdOpts, AccessData, AccessDataImpl } from './AccessData';
+import { FindAccessDataListByUserIdOpts, AccessData, AccessDataImpl } from './AccessData';
 import { REDIS_IDENTIFIER, Commands } from '@augejs/redis';
 
 const ACCESS_TOKEN_IDENTIFIER = 'accessToken';
@@ -11,13 +11,15 @@ const DEFAULT_ACCESS_TOKE_MAX_AGE= '20m';
 
 const logger = Logger.getLogger(ACCESS_TOKEN_IDENTIFIER);
 
-declare module '@augejs/koa' {
-  interface KoaContext {
-    createAccessData(userId:string, maxAge: string | number): AccessData;
-    findAccessData(sessionId: string): Promise<AccessData | null>
-    findAccessDataListByUserId(userId: string, opts?: FindSessionsByUserIdOpts): Promise<AccessData[]>
-    deleteAccessData(sessionId: string):Promise<void>
+interface AccessDataManager {
+  createAccessData(userId:string, maxAge: string | number): AccessData;
+  findAccessData(accessToken: string): Promise<AccessData | null>
+  findAccessDataListByUserId(userId: string, opts?: FindAccessDataListByUserIdOpts): Promise<AccessData[]>
+  deleteAccessData(accessToken: string):Promise<void>
+}
 
+declare module '@augejs/koa' {
+  interface KoaContext extends AccessDataManager {
     accessData: AccessData | null
   }
 }
@@ -59,6 +61,29 @@ export function AccessTokenManager(opts?: AccessDataConfigOptions): ClassDecorat
           ...scanNode.getConfig(ACCESS_TOKEN_IDENTIFIER),
         };
 
+        const accessDataManager: AccessDataManager = {
+          createAccessData(userId:string, maxAge: string | number): AccessData {
+            const ctx = this as KoaContext;
+            const ip = ctx.ip;
+            const currentMaxAge: string | number = (maxAge ?? config.maxAge ?? DEFAULT_ACCESS_TOKE_MAX_AGE) as string | number;
+            return AccessDataImpl.create(redis, userId, ip, currentMaxAge);
+          },
+
+          async findAccessData(accessToken: string): Promise<AccessData | null> {
+            return await AccessDataImpl.find(redis, accessToken);
+          },
+
+          async findAccessDataListByUserId(userId: string, opts?: FindAccessDataListByUserIdOpts): Promise<AccessData[]> {
+            const ctx = this as KoaContext;
+            const currentAccessToken = ctx.accessData?.token ?? null;
+            return await AccessDataImpl.findAccessDataListByUserId(redis, userId, currentAccessToken, opts);
+          },
+          
+          async deleteAccessData(accessToken: string):Promise<void> {
+            await AccessDataImpl.delete(redis, accessToken);
+          },
+        }
+
         koa.context.calculateFingerprint = async function (): Promise<string> {
           const ctx = this as KoaContext;
           if (typeof config?.customCalculateFingerPrint === 'function') {
@@ -70,26 +95,9 @@ export function AccessTokenManager(opts?: AccessDataConfigOptions): ClassDecorat
           return crypto.createHash('md5').update(`${deviceId}${ip}${userAgent}`).digest('hex');
         }
 
-        koa.context.createAccessData = function(userId:string, maxAge: string | number): AccessData {
-          const ctx = this as KoaContext;
-          const ip = ctx.ip;
-          const currentMaxAge: string | number = (maxAge ?? config.maxAge ?? DEFAULT_ACCESS_TOKE_MAX_AGE) as string | number;
-          return AccessDataImpl.create(redis, userId, ip, currentMaxAge);
-        }
+        koa.context.accessData = null;
 
-        koa.context.findAccessData = async function(sessionId: string): Promise<AccessData | null> {
-          return await AccessDataImpl.find(redis, sessionId);
-        }
-
-        koa.context.findAccessDataListByUserId = async function (userId: string, opts?: FindSessionsByUserIdOpts): Promise<AccessData[]> {
-          const ctx = this as KoaContext;
-          const currentSessionId = ctx.accessData?.token ?? null;
-          return await AccessDataImpl.findSessionsByUserId(redis, userId, currentSessionId, opts);
-        }
-
-        koa.context.deleteAccessData = async function(sessionId: string):Promise<void> {
-          await AccessDataImpl.delete(redis, sessionId);
-        }
+        Object.assign(koa.context, accessDataManager);
 
         await next();
       })

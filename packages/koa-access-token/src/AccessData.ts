@@ -4,7 +4,7 @@ import { Commands } from "@augejs/redis";
 
 const DEFAULT_ACCESS_TOKE_KEY_PREFIX = 'access';
 
-export interface FindSessionsByUserIdOpts {
+export interface FindAccessDataListByUserIdOpts {
   skipCount?: number,
   incudesCurrent?: boolean,
 }
@@ -80,7 +80,7 @@ export class AccessDataImpl implements AccessData {
     }
   }
 
-  static async findSessionsByUserId(redis: Commands, userId: string, currentAccessToken: string | null, opts?: FindSessionsByUserIdOpts): Promise<AccessData[]> {
+  static async findAccessDataListByUserId(redis: Commands, userId: string, currentAccessToken: string | null, opts?: FindAccessDataListByUserIdOpts): Promise<AccessData[]> {
     let results: AccessData[] = [];
 
     const skipCount = opts?.skipCount ?? 0;
@@ -111,8 +111,8 @@ export class AccessDataImpl implements AccessData {
     return results;
   }
 
-  static async delete(redis: Commands, sessionId: string): Promise<void> {
-    const redisKey = getRedisKeyFromAccessToken(sessionId);
+  static async delete(redis: Commands, accessToken: string): Promise<void> {
+    const redisKey = getRedisKeyFromAccessToken(accessToken);
     await redis.del(redisKey);
   }
 
