@@ -12,7 +12,7 @@ const DEFAULT_ACCESS_TOKE_MAX_AGE= '20m';
 const logger = Logger.getLogger(ACCESS_TOKEN_IDENTIFIER);
 
 interface AccessDataManager {
-  createAccessData(userId:string, maxAge: string | number): AccessData;
+  createAccessData(userId:string, maxAge?: string | number): AccessData;
   findAccessData(accessToken: string): Promise<AccessData | null>
   findAccessDataListByUserId(userId: string, opts?: FindAccessDataListByUserIdOpts): Promise<AccessData[]>
   deleteAccessData(accessToken: string):Promise<void>
@@ -62,7 +62,7 @@ export function AccessTokenManager(opts?: AccessDataConfigOptions): ClassDecorat
         };
 
         const accessDataManager: AccessDataManager = {
-          createAccessData(userId:string, maxAge: string | number): AccessData {
+          createAccessData(userId:string, maxAge?: string | number): AccessData {
             const ctx = this as KoaContext;
             const ip = ctx.ip;
             const currentMaxAge: string | number = (maxAge ?? config.maxAge ?? DEFAULT_ACCESS_TOKE_MAX_AGE) as string | number;
