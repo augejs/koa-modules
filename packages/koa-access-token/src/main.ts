@@ -6,6 +6,8 @@ import { I18N_IDENTIFIER, II18n } from '@augejs/i18n';
 import { FindAccessDataListByUserIdOpts, AccessData, AccessDataImpl } from './AccessData';
 import { REDIS_IDENTIFIER, Commands } from '@augejs/redis';
 
+export { AccessData };
+
 const ACCESS_TOKEN_IDENTIFIER = 'accessToken';
 const DEFAULT_ACCESS_TOKE_MAX_AGE= '20m';
 
