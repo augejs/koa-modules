@@ -40,7 +40,7 @@ function getRedisKeyFromAccessToken(accessToken: string): string {
 }
 
 function getAccessionTokenFromRedisKey(redisKey: string): string {
-  return Buffer.from(redisKey, 'base64').toString('base64');
+  return Buffer.from(redisKey, 'utf8').toString('base64');
 }
 
 export class AccessDataImpl implements AccessData {
