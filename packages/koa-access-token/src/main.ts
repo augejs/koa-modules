@@ -2,7 +2,6 @@ import crypto from 'crypto';
 
 import { Config, LifecycleOnInitHook, Logger, Metadata, ScanContext, ScanNode } from '@augejs/core';
 import { KOA_WEB_SERVER_IDENTIFIER, MiddlewareFactory, HttpStatus, KoaApplication, KoaContext } from '@augejs/koa';
-import { I18N_IDENTIFIER, I18n } from '@augejs/i18n';
 import { FindAccessDataListByUserIdOpts, AccessData, AccessDataImpl } from './AccessData';
 import { REDIS_IDENTIFIER, Commands } from '@augejs/redis';
 
@@ -118,8 +117,6 @@ type AccessTokenMiddlewareOptions = {
 // https://github.com/koajs/bodyparser
 export function AccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): ClassDecorator & MethodDecorator {
   return MiddlewareFactory(async (scanNode: ScanNode) => {
-    const i18n = scanNode.context.container.get<I18n>(I18N_IDENTIFIER);
-
     const config: AccessTokenMiddlewareOptions = {
       autoActive: true,
       autoSave: true,
@@ -143,13 +140,7 @@ export function AccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): Clas
           // https://github.com/ValueFE/egg-access-token/blob/1f3718bc6a71c548236facc5694e96263a20daa6/app/middleware/accessToken.js#L21
           // todo throw error here
           logger.warn(`ip: ${ctx.ip} accessToken is required!`);
-
-          ctx.throw(HttpStatus.StatusCodes.UNAUTHORIZED, 
-            i18n.formatMessage({
-              id: 'Error_Missing_Access_Token',
-              defaultMessage: 'AccessToken is Required'
-            })
-          )
+          ctx.throw(HttpStatus.StatusCodes.UNAUTHORIZED, 'AccessToken is Required');
         }
       }
 
@@ -163,12 +154,7 @@ export function AccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): Clas
           // todo throw error here
           // https://github.com/ValueFE/egg-access-token/blob/1f3718bc6a71c548236facc5694e96263a20daa6/app/middleware/accessToken.js#L35
           logger.warn(`ip: ${ctx.ip} accessToken is invalid!`);
-          ctx.throw(HttpStatus.StatusCodes.UNAUTHORIZED, 
-            i18n.formatMessage({
-              id: 'Error_Invalid_Access_Token',
-              defaultMessage: 'AccessToken Is Invalid'
-            })
-          )
+          ctx.throw(HttpStatus.StatusCodes.UNAUTHORIZED, 'AccessToken Is Invalid');
         }
       }
 
@@ -176,7 +162,10 @@ export function AccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): Clas
         const flashMessage = accessData.flashMessage ?? '';
         logger.warn(`userId: ${accessData.userId} accessToken is ready to invalid. message: ${flashMessage}`);
         await accessData.delete();
-        ctx.throw(HttpStatus.StatusCodes.UNAUTHORIZED, flashMessage);
+        if (flashMessage) {
+          ctx.set('x-message', flashMessage);
+        }
+        ctx.throw(HttpStatus.StatusCodes.UNAUTHORIZED, 'AccessToken Is Invalid');
       }
 
       if (checkFingerprint) {
@@ -184,13 +173,7 @@ export function AccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): Clas
         if (accessData.fingerprint !== calculatedFingerprint) {
           await accessData.delete();
           logger.warn(`userId: ${accessData.userId} fingerprint is invalid expect: ${calculatedFingerprint} receive: ${accessData.fingerprint}`);
-        
-          ctx.throw(HttpStatus.StatusCodes.UNAUTHORIZED, 
-            i18n.formatMessage({
-              id: 'Error_Invalid_Client_Fingerprint',
-              defaultMessage: 'Client fingerprint is changed!'
-            })
-          )
+          ctx.throw(HttpStatus.StatusCodes.UNAUTHORIZED, 'AccessToken Is Invalid');
         }
       }
 
