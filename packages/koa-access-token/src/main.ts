@@ -2,7 +2,7 @@ import crypto from 'crypto';
 
 import { Config, LifecycleOnInitHook, Logger, Metadata, ScanContext, ScanNode } from '@augejs/core';
 import { KOA_WEB_SERVER_IDENTIFIER, MiddlewareFactory, HttpStatus, KoaApplication, KoaContext } from '@augejs/koa';
-import { I18N_IDENTIFIER, II18n } from '@augejs/i18n';
+import { I18N_IDENTIFIER, I18n } from '@augejs/i18n';
 import { FindAccessDataListByUserIdOpts, AccessData, AccessDataImpl } from './AccessData';
 import { REDIS_IDENTIFIER, Commands } from '@augejs/redis';
 
@@ -118,7 +118,7 @@ type AccessTokenMiddlewareOptions = {
 // https://github.com/koajs/bodyparser
 export function AccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): ClassDecorator & MethodDecorator {
   return MiddlewareFactory(async (scanNode: ScanNode) => {
-    const i18n:II18n = scanNode.context.container.get(I18N_IDENTIFIER);
+    const i18n = scanNode.context.container.get<I18n>(I18N_IDENTIFIER);
 
     const config: AccessTokenMiddlewareOptions = {
       autoActive: true,
@@ -134,7 +134,7 @@ export function AccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): Clas
     const optional = !!config?.optional;
 
     return async (ctx: KoaContext, next: CallableFunction) => {
-      const accessToken:string = ctx.get('Authorization') ?? ctx.request.body?.get('access_token') ?? ctx.request.get('access_token');
+      const accessToken:string = ctx.get('Authorization') ?? (ctx.request.body as Record<string, unknown>)?.['access_token'] ?? ctx.request.query?.['access_token'];
       if (!accessToken) {
         if (optional) {
           await next();

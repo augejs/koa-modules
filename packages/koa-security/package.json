@@ -28,6 +28,7 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "koa-helmet": "^6.1.0"
+    "koa-helmet": "^6.1.0",
+    "tslib": "^2.3.0"
   }
 }

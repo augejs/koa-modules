@@ -33,6 +33,7 @@
     "@types/koa-send": "^4.1.2",
     "@types/koa-static-cache": "^5.1.0",
     "koa-send": "^5.0.1",
-    "koa-static-cache": "^5.1.4"
+    "koa-static-cache": "^5.1.4",
+    "tslib": "^2.3.0"
   }
 }

@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@types/http-proxy": "^1.17.6",
-    "http-proxy": "^1.18.1"
+    "http-proxy": "^1.18.1",
+    "tslib": "^2.3.0"
   }
 }
