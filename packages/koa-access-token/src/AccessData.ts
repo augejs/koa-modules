@@ -36,11 +36,11 @@ export interface AccessData {
 }
 
 function getRedisKeyFromAccessToken(accessToken: string): string {
-  return Buffer.from(accessToken, 'hex').toString('utf8');
+  return Buffer.from(accessToken, 'base64').toString('utf8');
 }
 
 function getAccessionTokenFromRedisKey(redisKey: string): string {
-  return Buffer.from(redisKey, 'utf8').toString('hex');
+  return Buffer.from(redisKey, 'utf8').toString('base64');
 }
 
 export class AccessDataImpl implements AccessData {
