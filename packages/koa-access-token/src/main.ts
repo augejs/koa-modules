@@ -40,7 +40,7 @@ interface AccessDataConfigOptions {
   customCalculateFingerPrint?: CalculateFingerPrintFunction
 }
 
-export function AccessTokenManager(opts?: AccessDataConfigOptions): ClassDecorator {
+export function KoaAccessTokenManager(opts?: AccessDataConfigOptions): ClassDecorator {
   return function(target: CallableFunction) {
     Metadata.decorate([
       Config({
@@ -115,7 +115,7 @@ type AccessTokenMiddlewareOptions = {
 }
 
 // https://github.com/koajs/bodyparser
-export function AccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): ClassDecorator & MethodDecorator {
+export function KoaAccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): ClassDecorator & MethodDecorator {
   return MiddlewareFactory(async (scanNode: ScanNode) => {
     const config: AccessTokenMiddlewareOptions = {
       autoActive: true,
@@ -131,7 +131,7 @@ export function AccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): Clas
     const optional = !!config?.optional;
 
     return async (ctx: KoaContext, next: CallableFunction) => {
-      const accessToken:string = ctx.get('Authorization') ?? (ctx.request.body as Record<string, unknown>)?.['access_token'] ?? ctx.request.query?.['access_token'];
+      const accessToken = (ctx.get('Authorization') || (ctx.request.body as Record<string, string>)?.['access_token'] || ctx.request.query?.['access_token'] || '') as string;
       if (!accessToken) {
         if (optional) {
           await next();

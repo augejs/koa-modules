@@ -1,5 +1,5 @@
 {
-  "name": "@augejs/koa-access-token",
+  "name": "@augejs/koa-limit-request",
   "version": "1.0.2-rc.2",
   "description": "",
   "main": "./dist/main.js",
