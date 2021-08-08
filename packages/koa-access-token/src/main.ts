@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { Context } from 'koa';
 
 import { Config, LifecycleOnInitHook, Logger, Metadata, ScanContext, ScanNode } from '@augejs/core';
 import { KOA_WEB_SERVER_IDENTIFIER, MiddlewareFactory, HttpStatus, KoaApplication, KoaContext } from '@augejs/koa';
@@ -20,7 +21,7 @@ interface AccessDataManager {
 }
 
 declare module '@augejs/koa' {
-  interface KoaContext extends AccessDataManager {
+  interface KoaContext extends Context, AccessDataManager {
     accessData: AccessData | null
   }
 }

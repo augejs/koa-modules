@@ -1,3 +1,4 @@
+import { Context } from 'koa';
 import { Config, LifecycleOnInitHook, Logger, Metadata, ScanContext, ScanNode } from '@augejs/core';
 import { KOA_WEB_SERVER_IDENTIFIER, MiddlewareFactory, HttpStatus, KoaApplication, KoaContext } from '@augejs/koa';
 import { SessionData, SessionDataImpl } from './SessionData';
@@ -17,7 +18,7 @@ interface SessionDataManager {
 }
 
 declare module '@augejs/koa' {
-  interface KoaContext extends SessionDataManager {
+  interface KoaContext extends Context, SessionDataManager {
     sessionData: SessionData | null
   }
 }
