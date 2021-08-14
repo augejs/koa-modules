@@ -60,7 +60,7 @@ export function KoaApidoc(opts?: Options): ClassDecorator {
           let header: null | {content: string } = null;
           if (config.header) {
             header = {
-              content: md.renderInline(config.header)
+              content: md.render(config.header)
             }
           }
 
@@ -68,7 +68,7 @@ export function KoaApidoc(opts?: Options): ClassDecorator {
 
           if (config.footer) {
             footer = {
-              content: md.renderInline(config.footer)
+              content: md.render(config.footer)
             }
           }
 
