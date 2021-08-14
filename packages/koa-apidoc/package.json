@@ -1,0 +1,40 @@
+{
+  "name": "@augejs/koa-apidoc",
+  "version": "1.0.2-rc.2",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --build ./tsconfig.json",
+    "postbuild": "mkdir -p ./dist/apidoc && cp -R '../../node_modules/apidoc/template/' ./dist/apidoc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augejs/koa-modules.git"
+  },
+  "author": "Alex.Zhang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/augejs/koa-modules/issues"
+  },
+  "homepage": "https://augejs.github.io/docs/Techniques-Koa-static",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^12.0.3",
+    "apidoc": "^0.29.0",
+    "copyfiles": "^2.4.0",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "apidoc-core": "^0.15.0",
+    "koa-static-cache": "^5.1.4",
+    "markdown-it": "^12.2.0",
+    "tslib": "^2.3.0"
+  }
+}
