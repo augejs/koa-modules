@@ -25,6 +25,8 @@ interface Options {
   version: string
   url?: string
   description?: string
+  useHostUrlAsSampleUrl?: boolean
+  sampleUrl?: string
   header?: string
   footer?: string
   order?: string[]
@@ -55,12 +57,19 @@ export function KoaApidoc(opts?: Options): ClassDecorator {
 
           const md = markdownIt();
 
+          let header: null | {content: string } = null;
           if (config.header) {
-            config.header = md.renderInline(config.header);
+            header = {
+              content: md.renderInline(config.header)
+            }
           }
 
+          let footer: null | {content: string } = null;
+
           if (config.footer) {
-            config.footer = md.renderInline(config.footer);
+            footer = {
+              content: md.renderInline(config.footer)
+            }
           }
 
           // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -91,18 +100,18 @@ export function KoaApidoc(opts?: Options): ClassDecorator {
           const apiProjectPath = path.join('/', config.url + '', 'api_project.js');
 
           koa.use(async (ctx: Context, next: CallableFunction)=>{
-            if (ctx.url === apiDataPath) {
+            if (ctx.url.startsWith(apiDataPath)) {
               ctx.type = 'application/javascript';
               ctx.body = `define({"api": ${JSON.stringify(apiResults)}})`;
-            } else if (ctx.url === apiProjectPath) {
+            } else if (ctx.url.startsWith(apiProjectPath)) {
               ctx.type = 'application/javascript';
               ctx.body = `define(${JSON.stringify({
-                name: config.title,
-                version: config.version,
+                name: config.title ?? 'apidoc',
+                version: config.version ?? '0.0.1',
                 description: config.description ?? '',
                 template: config.template,
-                header: config.header,
-                footer: config.footer,
+                header: header || undefined,
+                footer: footer || undefined,
                 order: config.order,
               })})`;
             }
@@ -110,7 +119,8 @@ export function KoaApidoc(opts?: Options): ClassDecorator {
           })
 
           koa.use(staticCache({
-            
+            maxAge: 60 * 60 * 24 * 30,
+            prefix: config.url,
             dir: path.join(__dirname, 'apidoc')
           }));
 
