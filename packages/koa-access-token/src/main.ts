@@ -132,7 +132,7 @@ export function KoaAccessTokenMiddleware(opts?: AccessTokenMiddlewareOptions): C
     const optional = !!config?.optional;
 
     return async (ctx: KoaContext, next: CallableFunction) => {
-      const accessToken = (ctx.get('Authorization') || (ctx.request.body as Record<string, string>)?.['access_token'] || ctx.request.query?.['access_token'] || '') as string;
+      const accessToken = (ctx.get('Authorization') || ctx.get('access-token') || (ctx.request.body as Record<string, string>)?.['access_token'] || ctx.request.query?.['access_token'] || '') as string;
       if (!accessToken) {
         if (optional) {
           await next();
