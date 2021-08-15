@@ -44,7 +44,9 @@ export function KoaApidoc(opts?: Options): ClassDecorator {
     Metadata.decorate([
       Config({
         [ConfigName]: {
-          url: '/apidoc'
+          url: '/apidoc',
+          title: 'apidoc',
+          version: '0.0.1',
         }
       }),
       LifecycleOnInitHook(
@@ -83,16 +85,18 @@ export function KoaApidoc(opts?: Options): ClassDecorator {
           });
 
           const contents = Metadata.getMetadata(Apidoc, Apidoc) as (string[] | undefined | null);
-          const apiResults: unknown[] = Array.isArray(contents) ?
-            contents.map(content => {
-              const parsedResults = apidocCore.parseSource(Buffer.from(content));
-              if (Array.isArray(parsedResults)) {
-                const apiResult = parsedResults[0];
-                if (apiResult && apiResult.local) {
-                  apiResults.push(apiResult);
-                }
-              }
-            }) : [];
+          const parsedContent = apidocCore.parseSource(contents?.join('\n'));
+          const apiDataJson = {};
+
+          const apiAppJson = {
+            name: config.title,
+            version: config.version,
+            description: config.description,
+            template: config.template,
+            header: header || undefined,
+            footer: footer || undefined,
+            order: config.order,
+          };
 
           const koa  = scanNode.context.container.get<KoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
 
@@ -102,18 +106,10 @@ export function KoaApidoc(opts?: Options): ClassDecorator {
           koa.use(async (ctx: Context, next: CallableFunction)=>{
             if (ctx.url.startsWith(apiDataPath)) {
               ctx.type = 'application/javascript';
-              ctx.body = `define({"api": ${JSON.stringify(apiResults)}})`;
+              ctx.body = `define({"api": ${JSON.stringify(apiDataJson)}})`;
             } else if (ctx.url.startsWith(apiProjectPath)) {
               ctx.type = 'application/javascript';
-              ctx.body = `define(${JSON.stringify({
-                name: config.title ?? 'apidoc',
-                version: config.version ?? '0.0.1',
-                description: config.description ?? '',
-                template: config.template,
-                header: header || undefined,
-                footer: footer || undefined,
-                order: config.order,
-              })})`;
+              ctx.body = `define(${JSON.stringify(apiAppJson)})`;
             }
             await next();
           })
