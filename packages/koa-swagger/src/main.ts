@@ -33,6 +33,7 @@ export function KoaSwagger(opts?: Options): ClassDecorator {
     Metadata.decorate([
       Config({
         [ConfigName]: {
+          verbose: false,
           path: path.join(__appRootDir, 'swagger.yml'),
           url: "/swagger",
         }
@@ -49,13 +50,18 @@ export function KoaSwagger(opts?: Options): ClassDecorator {
           const document = swagger.loadDocumentSync(documentPath) as swagger.Document;
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const schemaValidator = jsonValidator(schemaJson as any);
+          const schemaValidator = jsonValidator(schemaJson as any, {
+            verbose: true,
+          });
 
-          if (!swagger.validateDocument(document)) {
-            throw Error(`document: ${config.path} does not conform to the Swagger 2.0 schema \n ${schemaValidator.errors?.join('\n')} ?? ''`);
+          if (!schemaValidator(document)) {
+            const error = schemaValidator.errors.map(error => {
+              return `${error.field} ${error.message}`;
+            }).join('\n');
+            throw Error(`document: ${config.path} does not conform to the Swagger 2.0 schema \n ${error}`);
           }
 
-          const koa  = scanNode.context.container.get<KoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
+          const koa = scanNode.context.container.get<KoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
           const url = opts?.url ?? "/swagger";
           koa.use(ui(document, url, opts?.skipUrls));
 
