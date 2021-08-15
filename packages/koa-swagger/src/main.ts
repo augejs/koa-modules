@@ -3,6 +3,8 @@ import path from 'path';
 
 import * as swagger from 'swagger2';
 import { ui } from 'swagger2-koa';
+import jsonValidator from 'is-my-json-valid';
+import schemaJson from 'swagger2/dist/schema.json';
 
 import { 
   KoaApplication,
@@ -45,8 +47,12 @@ export function KoaSwagger(opts?: Options): ClassDecorator {
 
           const documentPath = config.path ?? path.join(__appRootDir, 'swagger.yml');
           const document = swagger.loadDocumentSync(documentPath) as swagger.Document;
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const schemaValidator = jsonValidator(schemaJson as any);
+
           if (!swagger.validateDocument(document)) {
-            throw Error(`document: ${config.path} does not conform to the Swagger 2.0 schema`);
+            throw Error(`document: ${config.path} does not conform to the Swagger 2.0 schema \n ${schemaValidator.errors?.join('\n')} ?? ''`);
           }
 
           const koa  = scanNode.context.container.get<KoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
