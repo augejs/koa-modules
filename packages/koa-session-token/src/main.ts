@@ -74,7 +74,7 @@ export function KoaSessionTokenManager(opts?: SessionDataConfigOptions): ClassDe
   }
 }
 
-export function KoaSessionTokenMiddleware(sessionName?: string): MethodDecorator {
+export function KoaSessionTokenMiddleware(sessionName?: string | string[]): MethodDecorator {
   return MiddlewareFactory(async () => {
     return async (ctx: KoaContext, next: CallableFunction) => {
       const sessionToken:string = (ctx.get('session-token') || (ctx.request.body as Record<string, string>)?.['session_token'] || ctx.request.query?.['session_token'] || '') as string;
@@ -89,9 +89,18 @@ export function KoaSessionTokenMiddleware(sessionName?: string): MethodDecorator
         ctx.throw(HttpStatus.StatusCodes.FORBIDDEN, 'SessionToken is Invalid');
       }
 
-      if (sessionName && sessionData.sessionName !== sessionName) {
-        logger.warn(`ip: ${ctx.ip} sessionName is invalid! expect ${sessionName} received ${sessionData.sessionName}`);
-        ctx.throw(HttpStatus.StatusCodes.FORBIDDEN, 'SessionName is Invalid');
+      if (sessionName) {
+        let isValidSessionName = false;
+        if (Array.isArray(sessionName) && sessionName.length > 0 && sessionName.includes(sessionData.sessionName)) {
+          isValidSessionName = true;
+        } else if (typeof sessionName === 'string' && sessionName === sessionData.sessionName) {
+          isValidSessionName = true;
+        }
+        
+        if (!isValidSessionName) {
+          logger.warn(`ip: ${ctx.ip} sessionName is invalid! expect ${sessionName} received ${sessionData.sessionName}`);
+          ctx.throw(HttpStatus.StatusCodes.FORBIDDEN, 'SessionName is Invalid');
+        }
       }
 
       ctx.sessionData = sessionData;
