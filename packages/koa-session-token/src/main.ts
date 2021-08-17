@@ -12,7 +12,7 @@ const DEFAULT_TOKE_MAX_AGE= '5m';
 const logger = Logger.getLogger(SESSION_TOKEN_IDENTIFIER);
 
 interface SessionDataManager {
-  createSessionData(sessionName:string, maxAge?: string | number): SessionData
+  createSessionData(sessionName:string, maxAge?: string | number, props?: Record<string, unknown>): SessionData
   findSessionData(sessionToken: string): Promise<SessionData | null>
   deleteSessionData(sessionToken: string):Promise<void>
 }
@@ -50,9 +50,9 @@ export function KoaSessionTokenManager(opts?: SessionDataConfigOptions): ClassDe
 
         const sessionDataManager: SessionDataManager = {
 
-          createSessionData(sessionName:string,  maxAge?: string | number): SessionData {
+          createSessionData(sessionName:string,  maxAge?: string | number, props?: Record<string, unknown>): SessionData {
             const currentMaxAge: string | number = (maxAge ?? config.maxAge ?? DEFAULT_TOKE_MAX_AGE) as string | number;
-            return SessionDataImpl.create(redis, sessionName, currentMaxAge);
+            return SessionDataImpl.create(redis, sessionName, currentMaxAge, props);
           },
 
           async findSessionData(stepToken: string): Promise<SessionData | null> {
@@ -96,7 +96,7 @@ export function KoaSessionTokenMiddleware(sessionName?: string | string[]): Meth
         } else if (typeof sessionName === 'string' && sessionName === sessionData.sessionName) {
           isValidSessionName = true;
         }
-        
+
         if (!isValidSessionName) {
           logger.warn(`ip: ${ctx.ip} sessionName is invalid! expect ${sessionName} received ${sessionData.sessionName}`);
           ctx.throw(HttpStatus.StatusCodes.FORBIDDEN, 'SessionName is Invalid');

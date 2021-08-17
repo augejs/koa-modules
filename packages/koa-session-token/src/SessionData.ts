@@ -24,13 +24,15 @@ export interface SessionData {
 }
 
 export class SessionDataImpl implements SessionData {
-  static create(redis: Commands, sessionName: string, maxAge: string | number): SessionData {
+  static create(redis: Commands, sessionName: string, maxAge: string | number, props?: Record<string, unknown>): SessionData {
     const maxAgeNum = typeof maxAge === 'string' ? ms(maxAge) : maxAge;
     const timestamp = Date.now();
     const nonce = crypto.randomBytes(32).toString('hex');
     const token = crypto.createHash('md5').update(`${nonce}-${timestamp}`).digest('hex');
 
     const sessionData = new SessionDataImpl(redis, {
+      ...props,
+
       token,
       maxAge: maxAgeNum,
       sessionName,
