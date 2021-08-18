@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import ms from "ms";
 import { Commands } from "@augejs/redis";
 
-export interface SessionData {
+export interface StepData {
 
   readonly token: string
   readonly createAt: number
@@ -10,8 +10,12 @@ export interface SessionData {
   readonly sessionName: string;
 
   maxAge: number
+  steps: string[] | null
 
-  setMaxAge(maxAge: string | number): void
+  pushStep(step: string): void;
+  popStep(): string | null;
+  getCurrentStep(): string | null
+  hasNextStep():boolean;
   
   set(key: string, val: unknown): void
   get<T=unknown>(key: string): T
@@ -23,16 +27,16 @@ export interface SessionData {
   delete(): Promise<void>
 }
 
-export class SessionDataImpl implements SessionData {
-  static create(redis: Commands, sessionName: string, maxAge: string | number, props?: Record<string, unknown>): SessionData {
+export class StepDataImpl implements StepData {
+  static create(redis: Commands, sessionName: string, maxAge: string | number, props?: Record<string, unknown>): StepData {
     const maxAgeNum = typeof maxAge === 'string' ? ms(maxAge) : maxAge;
     const timestamp = Date.now();
     const nonce = crypto.randomBytes(32).toString('hex');
     const token = crypto.createHash('md5').update(`${nonce}-${timestamp}`).digest('hex');
 
-    const sessionData = new SessionDataImpl(redis, {
+    const stepData = new StepDataImpl(redis, {
       ...props,
-
+      steps: props?.steps ?? [],
       token,
       maxAge: maxAgeNum,
       sessionName,
@@ -41,17 +45,17 @@ export class SessionDataImpl implements SessionData {
       updateAt: timestamp,
     });
 
-    return sessionData;
+    return stepData;
   }
 
-  static async find(redis: Commands, sessionToken: string): Promise<SessionData | null> {
+  static async find(redis: Commands, sessionToken: string): Promise<StepData | null> {
     const jsonResultStr = await redis.get(sessionToken);
     if (!jsonResultStr) {
       return null;
     }
 
     try {
-      return new SessionDataImpl(redis, JSON.parse(jsonResultStr));
+      return new StepDataImpl(redis, JSON.parse(jsonResultStr));
     } catch (err) {
       return null;
     }
@@ -71,6 +75,7 @@ export class SessionDataImpl implements SessionData {
     Object.assign(this.data, data);
     this.redis = redis;
     this.redisKey = this.token;
+    this.dataDirty = true;
   }
 
   get token(): string {
@@ -95,6 +100,41 @@ export class SessionDataImpl implements SessionData {
 
   setMaxAge(maxAge: string | number): void {
     this.set("maxAge", typeof maxAge === 'string' ? ms(maxAge) : maxAge);
+  }
+
+  get steps(): string[] | null {
+    return this.get<string[] | null>('steps') ?? null;
+  }
+
+  set steps(val: string[] | null) {
+    this.set('steps', val);
+  }
+
+  pushStep(step: string): void {
+    const steps = this.get<string[] | null>('steps') ?? [];
+    steps.push(step);
+    this.set('steps', steps);
+  }
+
+  popStep(): string | null {
+    const steps = this.get<string[] | null>('steps');
+    if (!steps) return null;
+    const popVa = steps.pop() ?? null;
+    this.set('steps', steps);
+    return popVa;
+  }
+
+  getCurrentStep(): string | null {
+    const steps = this.get<string[] | null>('steps');
+    if (!steps) return null;
+    if (steps.length > 0) return steps[0];
+    return null;
+  }
+
+  hasNextStep():boolean {
+    const steps = this.get<string[] | null>('steps');
+    if (!steps) return false;
+    return steps.length > 0;
   }
 
   get sessionName(): string {
