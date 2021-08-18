@@ -112,14 +112,14 @@ export class StepDataImpl implements StepData {
 
   pushStep(step: string): void {
     const steps = this.get<string[] | null>('steps') ?? [];
-    steps.push(step);
+    steps.unshift(step);
     this.set('steps', steps);
   }
 
   popStep(): string | null {
     const steps = this.get<string[] | null>('steps');
     if (!steps) return null;
-    const popVa = steps.pop() ?? null;
+    const popVa = steps.shift() ?? null;
     this.set('steps', steps);
     return popVa;
   }
