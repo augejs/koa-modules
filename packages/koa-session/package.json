@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "@types/koa-session": "^5.10.2",
-    "koa-session": "^6.0.0",
-    "tslib": "^2.3.0"
+    "koa-session": "^6.0.0"
   }
 }

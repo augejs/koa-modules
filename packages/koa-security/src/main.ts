@@ -1,7 +1,7 @@
 
 import KoaHelmet from 'koa-helmet';
 import helmet from 'helmet';
-import cors from 'koa2-cors';
+import cors from '@koa/cors';
 
 import { 
   LifecycleOnInitHook,
@@ -32,7 +32,11 @@ export function KoaSecurity(opts?: SecurityOptions | CallableFunction): ClassDec
           }
 
           const koa  = scanNode.context.container.get<KoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
-          koa.use(cors(config.cors));
+          
+          if (config.cors) {
+            koa.use(cors(config.cors));
+          }
+
           koa.use(KoaHelmet(config));
 
           await next();

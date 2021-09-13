@@ -25,10 +25,11 @@
     "access": "public"
   },
   "devDependencies": {
+    "@types/koa__cors": "^3.0.3",
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "koa-helmet": "^6.1.0",
-    "tslib": "^2.3.0"
+    "@koa/cors": "^3.1.0",
+    "koa-helmet": "^6.1.0"
   }
 }
