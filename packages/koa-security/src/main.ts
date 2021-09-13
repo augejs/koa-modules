@@ -4,10 +4,12 @@ import helmet from 'helmet';
 import cors from 'koa2-cors';
 
 import { 
+  LifecycleOnInitHook,
+  Metadata,
   ScanNode
 } from '@augejs/core';
 
-import { MiddlewareFactory } from '@augejs/koa';
+import { KoaApplication, KOA_WEB_SERVER_IDENTIFIER } from '@augejs/koa';
 
 export const ConfigName = 'security';
 
@@ -18,21 +20,24 @@ type CorsOptions = {
 
 type SecurityOptions = HelmetOptions & CorsOptions
 
-export function KoaSecurityMiddleware(opts?: SecurityOptions | CallableFunction): ClassDecorator & MethodDecorator {
-  return MiddlewareFactory(async (scanNode: ScanNode) => {
-    if (typeof opts === 'function') {
-      opts = await opts(scanNode);
-    }
+export function KoaSecurity(opts?: SecurityOptions | CallableFunction): ClassDecorator {
+  return function(target: NewableFunction) {
+    Metadata.decorate([
+      LifecycleOnInitHook(
+        async (scanNode: ScanNode, next: CallableFunction) => {
+          const config = {
+            ...scanNode.context.rootScanNode!.getConfig(ConfigName),
+            ...scanNode.getConfig(ConfigName),
+            ...opts,
+          }
 
-    const config: SecurityOptions = {
-      ...scanNode.context.rootScanNode!.getConfig(ConfigName),
-      ...scanNode.getConfig(ConfigName),
-      ...opts
-    }
+          const koa  = scanNode.context.container.get<KoaApplication>(KOA_WEB_SERVER_IDENTIFIER);
+          koa.use(cors(config.cors));
+          koa.use(KoaHelmet(config));
 
-    return [
-      cors(config.cors),
-      KoaHelmet(config)
-    ];
-  });
+          await next();
+        }
+      )
+    ], target)
+  }
 }
