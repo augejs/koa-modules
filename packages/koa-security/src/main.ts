@@ -1,7 +1,7 @@
 
 import KoaHelmet from 'koa-helmet';
 import helmet from 'helmet';
-import cors from '@koa/cors';
+import cors from 'koa2-cors';
 
 import { 
   LifecycleOnInitHook,
