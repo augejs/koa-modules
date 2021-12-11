@@ -30,6 +30,7 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
+    "@types/json-schema": "^7.0.9",
     "swagger2": "^3.0.0",
     "swagger2-koa": "^3.0.0"
   }

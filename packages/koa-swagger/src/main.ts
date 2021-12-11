@@ -18,9 +18,11 @@ import {
   Metadata,
   __appRootDir
 } from '@augejs/core';
+import { getSwaggerDocument } from 'SwaggerDefinition';
 
 type Options = {
   path?: string,
+  decorator: boolean
   url?: string,
   skipUrls?: string[],
 }
@@ -35,6 +37,7 @@ export function KoaSwagger(opts?: Options): ClassDecorator {
         [ConfigName]: {
           verbose: false,
           path: path.join(__appRootDir, 'swagger.yml'),
+          decorator: false,
           url: "/swagger",
         }
       }),
@@ -47,7 +50,10 @@ export function KoaSwagger(opts?: Options): ClassDecorator {
           } as Options;
 
           const documentPath = config.path ?? path.join(__appRootDir, 'swagger.yml');
-          const document = swagger.loadDocumentSync(documentPath) as swagger.Document;
+          const isFromDecorator = config.decorator;
+
+          const document = isFromDecorator ? getSwaggerDocument()
+            : swagger.loadDocumentSync(documentPath) as swagger.Document;
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const schemaValidator = jsonValidator(schemaJson as any, {
