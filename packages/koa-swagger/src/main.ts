@@ -5,6 +5,7 @@ import * as swagger from 'swagger2';
 import { ui } from 'swagger2-koa';
 import jsonValidator from 'is-my-json-valid';
 import schemaJson from 'swagger2/dist/schema.json';
+import { getSwaggerDocument } from './SwaggerDefinition';
 
 export * from './SwaggerDefinition';
 
@@ -20,7 +21,7 @@ import {
   Metadata,
   __appRootDir
 } from '@augejs/core';
-import { getSwaggerDocument } from 'SwaggerDefinition';
+
 
 type Options = {
   path?: string,
