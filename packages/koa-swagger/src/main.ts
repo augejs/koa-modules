@@ -6,6 +6,8 @@ import { ui } from 'swagger2-koa';
 import jsonValidator from 'is-my-json-valid';
 import schemaJson from 'swagger2/dist/schema.json';
 
+export * from './SwaggerDefinition';
+
 import { 
   KoaApplication,
   KOA_WEB_SERVER_IDENTIFIER,
