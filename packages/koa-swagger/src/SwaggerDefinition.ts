@@ -7,6 +7,7 @@ const swaggerDocument = {
   paths: {},
   definitions: {},
   tags: [],
+  securityDefinitions: {},
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
