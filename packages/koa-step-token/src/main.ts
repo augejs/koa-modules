@@ -74,7 +74,7 @@ export function KoaStepTokenManager(opts?: StepTokenManagerConfigOptions): Class
   }
 }
 
-export function KoaStepTokenMiddleware(sessionName: string | string[] | null, sessionStep: string): MethodDecorator {
+export function KoaStepTokenMiddleware(sessionName: string | string[] | null, sessionStep?: string): MethodDecorator {
   return MiddlewareFactory(async () => {
     return async (ctx: KoaContext, next: CallableFunction) => {
       const stepToken:string = (ctx.get('step-token') || (ctx.request.body as Record<string, string>)?.['step_token'] || ctx.request.query?.['step_token'] || '') as string;
