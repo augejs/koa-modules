@@ -85,13 +85,14 @@ export class AccessDataImpl implements AccessData {
 
     const skipCount = opts?.skipCount ?? 0;
     const incudesCurrent = opts?.incudesCurrent ?? false;
-  
-    const redisKeys: string[] = await redis.keys(`${(redis as any).options.keyPrefix}${DEFAULT_ACCESS_TOKE_KEY_PREFIX}:${userId}:*`);
+
+    const redisKeyPrefix = `${(redis as any).options.keyPrefix}`;
+    const redisKeys: string[] = await redis.keys(`${redisKeyPrefix}${DEFAULT_ACCESS_TOKE_KEY_PREFIX}:${userId}:*`);
     if (redisKeys.length === 0) return results;
 
     for (const redisKey of redisKeys) {
       // fix the first prefix
-      const accessToken: string = getAccessionTokenFromRedisKey(redisKey);
+      const accessToken: string = getAccessionTokenFromRedisKey(redisKey.substring(redisKeyPrefix.length));
       const accessData = await AccessDataImpl.find(redis, accessToken);
       if (!accessData) continue;
       if (!incudesCurrent && currentAccessToken && currentAccessToken === accessData.token) continue;
