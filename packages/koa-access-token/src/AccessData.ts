@@ -86,7 +86,7 @@ export class AccessDataImpl implements AccessData {
     const skipCount = opts?.skipCount ?? 0;
     const incudesCurrent = opts?.incudesCurrent ?? false;
   
-    const redisKeys: string[] = await redis.keys(`${DEFAULT_ACCESS_TOKE_KEY_PREFIX}:${userId}:*`);
+    const redisKeys: string[] = await redis.keys(`${(redis as any).options.keyPrefix}${DEFAULT_ACCESS_TOKE_KEY_PREFIX}:${userId}:*`);
     if (redisKeys.length === 0) return results;
 
     for (const redisKey of redisKeys) {

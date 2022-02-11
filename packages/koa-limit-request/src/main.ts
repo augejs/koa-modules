@@ -9,6 +9,7 @@ const logger = Logger.getLogger(LIMIT_REQUEST_IDENTIFIER);
 
 interface LimitRequestOpts {
   limitTime?: number | string
+  identifier?: (ctx: KoaContext) => Promise<string> | string
 }
 
 export function KoaLimitRequestMiddleware(limitOpts: LimitRequestOpts): ClassDecorator & MethodDecorator {
@@ -19,9 +20,10 @@ export function KoaLimitRequestMiddleware(limitOpts: LimitRequestOpts): ClassDec
 
       const requestPath = `${ctx.request.method}:${ctx.request.path}`;
       const accessToken = (ctx.get('Authorization') || (ctx.request.body as Record<string, string>)?.['access_token'] || ctx.request.query?.['access_token'] || '') as string;
+      const identifier = (await limitOpts.identifier?.(ctx)) ?? '';
       const ipAddress = ctx.ip;
 
-      const limitRequestContent = `${ipAddress}:${accessToken}:${requestPath}`;
+      const limitRequestContent = `${ipAddress}:${accessToken}:${requestPath}:${identifier}`;
 
       const redisKey = `limit:${limitRequestContent}`;
       const lastTimeStr = await redis.get(redisKey);
